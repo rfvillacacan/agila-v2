@@ -80,7 +80,7 @@ if (!file_exists($pcapPath)) {
     exit;
 }
 
-// Create placeholder with processing status
+// Create placeholder with processing status and progress tracking
 $placeholder = [
     'status' => 'processing',
     'original_filename' => $existingData['original_filename'] ?? 'Unknown',
@@ -90,10 +90,17 @@ $placeholder = [
     'total_sessions' => 0,
     'total_bytes' => $existingData['total_bytes'] ?? filesize($pcapPath),
     'pcap_filename' => $pcapFilename,
-    'error' => null
+    'error' => null,
+    'progress' => 0,  // Progress percentage
+    'progress_text' => 'Starting...'  // Progress status text
 ];
 
 file_put_contents($jsonPath, json_encode($placeholder, JSON_PRETTY_PRINT));
+
+// IMPORTANT: Set ignore_user_abort BEFORE sending response
+// This ensures processing continues even if user navigates away
+ignore_user_abort(true);
+set_time_limit(PROCESSING_TIMEOUT);
 
 // Send immediate response first
 echo json_encode([
@@ -103,20 +110,28 @@ echo json_encode([
     'message' => 'Processing started. This may take a few minutes...'
 ]);
 
-// Ensure output is sent
+// Ensure output is sent immediately so user can navigate away
 if (ob_get_level() > 0) {
     ob_end_flush();
 }
 flush();
 
-// Process in background (after response is sent)
-ignore_user_abort(true);
-set_time_limit(PROCESSING_TIMEOUT);
+// FastCGI/nginx may need this to close connection while script continues
+if (function_exists('fastcgi_finish_request')) {
+    fastcgi_finish_request();
+}
+
+// Process in background (after response is sent and connection closed)
 
 try {
-    // Parse PCAP file
+    // Parse PCAP file with progress tracking (using JSON file directly)
     $parser = new PcapParser();
+    $parser->setProgressFile($jsonPath); // Use JSON file instead of separate progress file
     $results = $parser->parse($pcapPath);
+    
+    // Remove progress fields from final result
+    unset($results['progress']);
+    unset($results['progress_text']);
     
     // Add metadata
     $results['status'] = 'processed';
@@ -135,6 +150,9 @@ try {
     $errorData['status'] = 'error';
     $errorData['error'] = $e->getMessage();
     $errorData['processed_at'] = time();
+    // Remove progress fields
+    unset($errorData['progress']);
+    unset($errorData['progress_text']);
     file_put_contents($jsonPath, json_encode($errorData, JSON_PRETTY_PRINT));
 }
 

@@ -6,9 +6,9 @@
 
 [![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-blue.svg)](https://www.php.net/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Active-success.svg)](https://github.com)
+[![Status](https://img.shields.io/badge/Status-Active-success.svg)](https://github.com/rfvillacacan/agila-v2)
 
-*Conceptualized & Developed by [Rolly Falco Villacacan](https://github.com)*
+*Conceptualized & Developed by [Rolly Falco Villacacan](https://github.com/rfvillacacan) | [LinkedIn](https://www.linkedin.com/in/rollyfalcovillacacan/)*
 
 </div>
 
@@ -73,8 +73,8 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/pcap-network-analyzer.git
-   cd pcap-network-analyzer/agila-v2
+   git clone https://github.com/rfvillacacan/agila-v2.git
+   cd agila-v2
    ```
 
 2. **Set up directory permissions** (Linux/Mac)
@@ -452,14 +452,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Credits
 
-- **Conceptualized & Developed by**: [Rolly Falco Villacacan](https://github.com)
+- **Conceptualized & Developed by**: [Rolly Falco Villacacan](https://github.com/rfvillacacan) | [LinkedIn](https://www.linkedin.com/in/rollyfalcovillacacan/)
 - **PCAP Parsing**: Based on libpcap and PCAPNG specifications
 - **Map Visualization**: [Leaflet.js](https://leafletjs.com/)
 - **Geolocation API**: [ip-api.com](http://ip-api.com/) (free tier)
 
 ## 📞 Support
 
-For issues, questions, or suggestions, please open an issue on GitHub.
+For issues, questions, or suggestions, please open an issue on [GitHub](https://github.com/rfvillacacan/agila-v2/issues).
 
 ---
 
@@ -467,6 +467,6 @@ For issues, questions, or suggestions, please open an issue on GitHub.
 
 **Made with ❤️ for network analysis**
 
-⭐ Star this repo if you find it useful!
+⭐ [Star this repo](https://github.com/rfvillacacan/agila-v2) if you find it useful!
 
 </div>

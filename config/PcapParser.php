@@ -19,6 +19,7 @@ class PcapParser {
     private $totalBytes = 0;
     private $firstTimestamp = null;
     private $lastTimestamp = null;
+    private $progressFile = null; // File path to save progress updates
     
     // Magic numbers
     const PCAP_MAGIC_LE = "\xd4\xc3\xb2\xa1";
@@ -43,6 +44,38 @@ class PcapParser {
     const ETHERTYPE_IPV6 = 0x86DD;
     
     /**
+     * Set progress file for tracking
+     */
+    public function setProgressFile($progressFile) {
+        $this->progressFile = $progressFile;
+    }
+    
+    /**
+     * Update progress - update directly in JSON file
+     */
+    private function updateProgress($percent, $statusText = '') {
+        if ($this->progressFile && file_exists($this->progressFile)) {
+            try {
+                // Read current JSON data
+                $content = @file_get_contents($this->progressFile);
+                if ($content) {
+                    $data = @json_decode($content, true);
+                    if ($data) {
+                        // Update progress fields
+                        $data['progress'] = max(0, min(100, (int)$percent));
+                        $data['progress_text'] = $statusText;
+                        
+                        // Write back to file
+                        @file_put_contents($this->progressFile, json_encode($data, JSON_PRETTY_PRINT));
+                    }
+                }
+            } catch (Exception $e) {
+                // Silently fail - don't interrupt processing
+            }
+        }
+    }
+    
+    /**
      * Parse a PCAP/PCAPNG file
      */
     public function parse($filePath) {
@@ -59,8 +92,12 @@ class PcapParser {
         }
         
         try {
+            $this->updateProgress(5, 'Detecting file format...');
+            
             // Detect file format
             $this->detectFormat();
+            
+            $this->updateProgress(10, 'Parsing ' . strtoupper($this->format) . ' file...');
             
             // Parse based on format
             if ($this->format === 'pcapng') {
@@ -69,12 +106,21 @@ class PcapParser {
                 $this->parsePcap();
             }
             
+            $this->updateProgress(90, 'Finalizing sessions...');
+            
             // Finalize sessions
             $this->finalizeSessions();
+            
+            $this->updateProgress(100, 'Complete!');
             
             return $this->getResults();
         } finally {
             fclose($this->fileHandle);
+            // Clean up progress file after completion
+            if ($this->progressFile && file_exists($this->progressFile)) {
+                // Keep it for a bit so frontend can read final status
+                // Will be cleaned up by get_processing_progress.php
+            }
         }
     }
     
@@ -152,12 +198,29 @@ class PcapParser {
         // Skip global header (already read magic, skip rest of 24-byte header)
         $this->skipBytes(20);
         
+        $startPos = ftell($this->fileHandle);
+        $lastProgressUpdate = 0;
+        $lastProgressTime = time();
+        
         // Read packets
         while (!$this->isEof()) {
             $packet = $this->readPcapPacket();
             if ($packet === null) break;
             
             $this->processPacket($packet['data'], $packet['timestamp'], $packet['size']);
+            
+            // Update progress every 100 packets or every 1 second (more frequent)
+            $currentPos = ftell($this->fileHandle);
+            $bytesRead = $currentPos - $startPos;
+            $progress = 10 + (($bytesRead / max(1, $this->fileSize)) * 80); // 10-90%
+            $currentTime = time();
+            
+            // Update more frequently: every 100 packets OR every 1 second
+            if ($this->packetCount % 100 === 0 || ($currentTime - $lastProgressTime) >= 1) {
+                $this->updateProgress(round($progress), "Processing packets... ({$this->packetCount} packets)");
+                $lastProgressUpdate = $progress;
+                $lastProgressTime = $currentTime;
+            }
         }
     }
     
@@ -203,11 +266,28 @@ class PcapParser {
      */
     private function parsePcapng() {
         // Continue reading blocks (we already read the SHB)
+        $startPos = ftell($this->fileHandle);
+        $lastProgressUpdate = 0;
+        $lastProgressTime = time();
+        
         while (!$this->isEof()) {
             $packet = $this->readPcapngPacket();
             if ($packet === null) break;
             
             $this->processPacket($packet['data'], $packet['timestamp'], $packet['size']);
+            
+            // Update progress every 100 packets or every 1 second (more frequent)
+            $currentPos = ftell($this->fileHandle);
+            $bytesRead = $currentPos - $startPos;
+            $progress = 10 + (($bytesRead / max(1, $this->fileSize)) * 80); // 10-90%
+            $currentTime = time();
+            
+            // Update more frequently: every 100 packets OR every 1 second
+            if ($this->packetCount % 100 === 0 || ($currentTime - $lastProgressTime) >= 1) {
+                $this->updateProgress(round($progress), "Processing packets... ({$this->packetCount} packets)");
+                $lastProgressUpdate = $progress;
+                $lastProgressTime = $currentTime;
+            }
         }
     }
     

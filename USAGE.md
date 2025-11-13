@@ -254,5 +254,5 @@ The table below the map shows all active sessions at the current timestamp:
 
 ---
 
-**Need Help?** Check the [README.md](README.md) for detailed documentation or open an issue on GitHub.
+**Need Help?** Check the [README.md](README.md) for detailed documentation or open an issue on [GitHub](https://github.com/rfvillacacan/agila-v2/issues).
 

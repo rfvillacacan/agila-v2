@@ -13,7 +13,7 @@ Thank you for your interest in contributing to PCAP Network Analyzer! This docum
 
 ### Reporting Bugs
 
-1. **Check existing issues** to see if the bug has already been reported
+1. **Check existing issues** on [GitHub](https://github.com/rfvillacacan/agila-v2/issues) to see if the bug has already been reported
 2. **Create a new issue** with:
    - Clear, descriptive title
    - Steps to reproduce
@@ -23,7 +23,7 @@ Thank you for your interest in contributing to PCAP Network Analyzer! This docum
 
 ### Suggesting Features
 
-1. **Check existing issues** for similar feature requests
+1. **Check existing issues** on [GitHub](https://github.com/rfvillacacan/agila-v2/issues) for similar feature requests
 2. **Create a new issue** with:
    - Clear description of the feature
    - Use case and benefits
@@ -31,7 +31,7 @@ Thank you for your interest in contributing to PCAP Network Analyzer! This docum
 
 ### Pull Requests
 
-1. **Fork the repository**
+1. **Fork the repository** on [GitHub](https://github.com/rfvillacacan/agila-v2)
 2. **Create a feature branch**:
    ```bash
    git checkout -b feature/your-feature-name
@@ -114,7 +114,7 @@ Before submitting a PR, please test:
 
 ## Questions?
 
-Feel free to open an issue with the `question` label if you need help or clarification.
+Feel free to open an issue on [GitHub](https://github.com/rfvillacacan/agila-v2/issues) with the `question` label if you need help or clarification.
 
 Thank you for contributing! 🎉
 

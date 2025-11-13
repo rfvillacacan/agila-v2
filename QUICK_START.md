@@ -92,5 +92,5 @@ You can create sample PCAP files using:
 
 ---
 
-**Need help?** Open an issue on GitHub!
+**Need help?** Open an issue on [GitHub](https://github.com/rfvillacacan/agila-v2/issues)!
 
