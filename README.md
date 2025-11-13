@@ -53,7 +53,20 @@
 
 ## 🖼️ Screenshots
 
-*Screenshots coming soon - Add your dashboard screenshots here*
+### Main Dashboard
+The interactive dashboard displays network sessions on a world map with real-time playback controls.
+
+![Dashboard Main](screenshots/dashboard-main.png)
+
+### Dashboard with Active Sessions
+View network traffic sessions visualized on the map with detailed session information in the table below.
+
+![Dashboard with Sessions](screenshots/dashboard-with-sessions.png)
+
+### Upload Page
+Upload and manage your PCAP/PCAPNG files with drag-and-drop support.
+
+![Upload Page](screenshots/upload-page.png)
 
 ## 📦 Requirements
 
